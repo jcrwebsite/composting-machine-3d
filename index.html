@@ -1375,6 +1375,7 @@
             let isDragging = false;
             let previousMousePosition = { x: 0, y: 0 };
 
+            // Mouse controls
             renderer.domElement.addEventListener('mousedown', (e) => {
                 isDragging = true;
             });
@@ -1387,8 +1388,8 @@
                     };
 
                     // Move camera around the machine (fixed inversion)
-                    cameraAngle -= deltaMove.x * 0.01; // Reversed for natural control
-                    cameraHeight += deltaMove.y * 0.05; // Reversed for natural control
+                    cameraAngle -= deltaMove.x * 0.01;
+                    cameraHeight += deltaMove.y * 0.05;
                     cameraHeight = Math.max(-10, Math.min(15, cameraHeight));
                 }
 
@@ -1403,6 +1404,71 @@
                 e.preventDefault();
                 cameraRadius += e.deltaY * 0.02;
                 cameraRadius = Math.max(8, Math.min(30, cameraRadius));
+            });
+
+            // Touch controls for mobile
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let lastTouchX = 0;
+            let lastTouchY = 0;
+            let touchDistance = 0;
+
+            renderer.domElement.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                
+                if (e.touches.length === 1) {
+                    touchStartX = e.touches[0].clientX;
+                    touchStartY = e.touches[0].clientY;
+                    lastTouchX = touchStartX;
+                    lastTouchY = touchStartY;
+                    isDragging = true;
+                } else if (e.touches.length === 2) {
+                    const dx = e.touches[0].clientX - e.touches[1].clientX;
+                    const dy = e.touches[0].clientY - e.touches[1].clientY;
+                    touchDistance = Math.sqrt(dx * dx + dy * dy);
+                }
+            }, { passive: false });
+
+            renderer.domElement.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                
+                if (e.touches.length === 1 && isDragging) {
+                    const touchX = e.touches[0].clientX;
+                    const touchY = e.touches[0].clientY;
+                    
+                    const deltaMove = {
+                        x: touchX - lastTouchX,
+                        y: touchY - lastTouchY
+                    };
+
+                    cameraAngle -= deltaMove.x * 0.01;
+                    cameraHeight += deltaMove.y * 0.05;
+                    cameraHeight = Math.max(-10, Math.min(15, cameraHeight));
+
+                    lastTouchX = touchX;
+                    lastTouchY = touchY;
+                } else if (e.touches.length === 2) {
+                    const dx = e.touches[0].clientX - e.touches[1].clientX;
+                    const dy = e.touches[0].clientY - e.touches[1].clientY;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    const delta = distance - touchDistance;
+                    cameraRadius -= delta * 0.05;
+                    cameraRadius = Math.max(8, Math.min(30, cameraRadius));
+                    
+                    touchDistance = distance;
+                }
+            }, { passive: false });
+
+            renderer.domElement.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                isDragging = false;
+                touchDistance = 0;
+            }, { passive: false });
+
+            renderer.domElement.addEventListener('touchcancel', (e) => {
+                isDragging = false;
+                touchDistance = 0;
             });
         }
 
