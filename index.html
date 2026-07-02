@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Industrial Composting Machine - 3D Model</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        #container {
+            width: 100vw;
+            height: 100vh;
+        }
+        #info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 300px;
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+        #info h1 {
+            font-size: 22px;
+            margin-bottom: 10px;
+            color: #4fc3f7;
+        }
+        #info p {
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+        #controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px 25px;
+            border-radius: 30px;
+            display: flex;
+            gap: 15px;
+            backdrop-filter: blur(10px);
+            flex-wrap: wrap;
+            max-width: 90%;
+            justify-content: center;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        button.active {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .label {
+            position: absolute;
+            color: white;
+            background: rgba(0, 0, 0, 0.75);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            pointer-events: none;
+            white-space: nowrap;
+            border-left: 3px solid #4fc3f7;
+            backdrop-filter: blur(5px);
+            display: none;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.2s ease;
+        }
+        .label.visible {
+            display: block;
+        }
+        #intro {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeOut 1.5s ease 6s forwards;
+            overflow: hidden;
+        }
+        #intro::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(120, 40, 200, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(20, 150, 255, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(255, 100, 200, 0.2) 0%, transparent 70%);
+            animation: rotateGradient 10s linear infinite;
+        }
+        @keyframes rotateGradient {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+        .intro-grid {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(100, 200, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(100, 200, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            transform: perspective(500px) rotateX(60deg);
+            transform-origin: center bottom;
+        }
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 50px 50px; }
+        }
+        .intro-rays {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: conic-gradient(
+                from 0deg at 50% 50%,
+                transparent 0deg 20deg,
+                rgba(255, 215, 0, 0.1) 20deg 40deg,
+                transparent 40deg 60deg,
+                rgba(100, 200, 255, 0.1) 60deg 80deg,
+                transparent 80deg 100deg,
+                rgba(255, 100, 200, 0.1) 100deg 120deg,
+                transparent 120deg
+            );
+            animation: rotateRays 20s linear infinite;
+        }
+        @keyframes rotateRays {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .intro-container {
+            position: relative;
+            text-align: center;
+            padding: 60px 80px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 40px;
+            backdrop-filter: blur(30px);
+            border: 3px solid;
+            border-image: linear-gradient(135deg, #667eea, #764ba2, #f093fb, #667eea) 1;
+            box-shadow: 
+                0 0 100px rgba(102, 126, 234, 0.5),
+                0 0 200px rgba(240, 147, 251, 0.3),
+                inset 0 0 80px rgba(255, 255, 255, 0.03);
+            opacity: 0;
+            animation: containerAppear 1.5s ease 0.5s forwards;
+            transform-style: preserve-3d;
+        }
+        @keyframes containerAppear {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) rotateY(-90deg) translateZ(-200px);
+                filter: blur(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotateY(0) translateZ(0);
+                filter: blur(0);
+            }
+        }
+        .intro-glow {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.4) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulse 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+        @keyframes pulse {
+            0%, 100% { 
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.3;
+            }
+            50% { 
+                transform: translate(-50%, -50%) scale(1.5);
+                opacity: 0.6;
+            }
+        }
+        .intro-title {
+            font-size: 120px;
+            font-weight: 900;
+            background: linear-gradient(135deg, 
+                #667eea 0%, 
+                #a5f3fc 20%,
+                #ffd700 40%,
+                #f093fb 60%,
+                #667eea 80%,
+                #a5f3fc 100%);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: 30px;
+            opacity: 0;
+            animation: titleReveal 2s ease 1.5s forwards, gradientShift 5s ease infinite;
+            letter-spacing: 15px;
+            line-height: 1.1;
+            position: relative;
+            filter: drop-shadow(0 0 40px rgba(102, 126, 234, 0.6));
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+        @keyframes titleReveal {
+            0% {
+                opacity: 0;
+                transform: translateY(100px) scale(0.5);
+                letter-spacing: 50px;
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                letter-spacing: 15px;
+            }
+        }
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .intro-title span {
+            display: inline-block;
+        }
+        .intro-subtitle-container {
+            position: relative;
+            margin-top: 20px;
+        }
+        .intro-subtitle {
+            font-size: 50px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            opacity: 0;
+            animation: subtitleReveal 1.5s ease 3s forwards;
+            letter-spacing: 8px;
+            position: relative;
+            filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.8));
+        }
+        @keyframes subtitleReveal {
+            0% {
+                opacity: 0;
+                transform: translateX(-100px) rotateY(-90deg);
+                filter: blur(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0) rotateY(0);
+                filter: blur(0);
+            }
+        }
+        .intro-line {
+            width: 0;
+            height: 4px;
+            background: linear-gradient(90deg, 
+                transparent,
+                #667eea,
+                #a5f3fc,
+                #ffd700,
+                #f093fb,
+                #667eea,
+                transparent);
+            background-size: 200% 100%;
+            margin: 35px auto;
+            animation: expandLine 1.5s ease 2s forwards, lineShimmer 2s ease infinite 3.5s;
+            box-shadow: 
+                0 0 20px rgba(102, 126, 234, 0.8),
+                0 0 40px rgba(255, 215, 0, 0.5);
+            border-radius: 10px;
+        }
+        @keyframes expandLine {
+            to { width: 600px; }
+        }
+        @keyframes lineShimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .intro-ornament {
+            position: absolute;
+            font-size: 80px;
+            opacity: 0;
+            animation: ornamentAppear 1s ease 3.5s forwards;
+            filter: drop-shadow(0 0 20px currentColor);
+        }
+        .ornament-left {
+            left: -120px;
+            top: 50%;
+            transform: translateY(-50%) rotate(-15deg);
+            animation: ornamentAppear 1s ease 3.5s forwards, floatLeft 4s ease-in-out infinite 4.5s;
+        }
+        .ornament-right {
+            right: -120px;
+            top: 50%;
+            transform: translateY(-50%) rotate(15deg);
+            animation: ornamentAppear 1s ease 3.5s forwards, floatRight 4s ease-in-out infinite 4.5s;
+        }
+        @keyframes ornamentAppear {
+            from {
+                opacity: 0;
+                transform: translateY(-50%) scale(0) rotate(180deg);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(-50%) scale(1) rotate(0deg);
+            }
+        }
+        @keyframes floatLeft {
+            0%, 100% { transform: translateY(-50%) translateX(0) rotate(-15deg); }
+            50% { transform: translateY(-50%) translateX(-10px) rotate(-20deg); }
+        }
+        @keyframes floatRight {
+            0%, 100% { transform: translateY(-50%) translateX(0) rotate(15deg); }
+            50% { transform: translateY(-50%) translateX(10px) rotate(20deg); }
+        }
+        .intro-particles-3d {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .particle-3d {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, #fff, transparent);
+            border-radius: 50%;
+            animation: particle3dFloat 6s ease-in-out infinite;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+        }
+        @keyframes particle3dFloat {
+            0% {
+                transform: translate3d(0, 0, 0) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate3d(var(--tx), var(--ty), 100px) scale(2);
+                opacity: 0;
+            }
+        }
+        .intro-hexagons {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+        }
+        .hexagon {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            clip-path: polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(240, 147, 251, 0.3));
+            animation: hexRotate 10s linear infinite;
+        }
+        @keyframes hexRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .hex1 { top: 10%; left: 10%; animation-delay: 0s; }
+        .hex2 { top: 20%; right: 15%; animation-delay: 1s; }
+        .hex3 { bottom: 15%; left: 20%; animation-delay: 2s; }
+        .hex4 { bottom: 25%; right: 10%; animation-delay: 1.5s; }
+        .intro-shine {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.1) 50%,
+                transparent 70%
+            );
+            top: -50%;
+            left: -50%;
+            animation: shine 3s ease-in-out 2s infinite;
+        }
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            #info {
+                max-width: 90%;
+                font-size: 11px;
+                padding: 15px;
+            }
+            #info h1 {
+                font-size: 16px;
+            }
+            #info p {
+                font-size: 11px;
+            }
+            #controls {
+                padding: 10px 15px;
+                gap: 8px;
+                max-width: 95%;
+            }
+            button {
+                padding: 8px 12px;
+                font-size: 11px;
+            }
+            .intro-container {
+                padding: 30px 20px;
+                border-radius: 20px;
+                max-width: 90%;
+            }
+            .intro-title {
+                font-size: 48px;
+                letter-spacing: 5px;
+                margin-bottom: 15px;
+            }
+            .intro-line {
+                margin: 20px auto;
+            }
+            @keyframes expandLine {
+                to { width: 250px; }
+            }
+            .intro-subtitle {
+                font-size: 24px;
+                letter-spacing: 3px;
+            }
+            .intro-ornament {
+                font-size: 40px;
+            }
+            .ornament-left {
+                left: -50px;
+            }
+            .ornament-right {
+                right: -50px;
+            }
+            .intro-glow {
+                width: 200px;
+                height: 200px;
+            }
+            .particle-3d {
+                width: 4px;
+                height: 4px;
+            }
+            .hexagon {
+                width: 60px;
+                height: 60px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            #info {
+                top: 10px;
+                left: 10px;
+                padding: 12px;
+                max-width: calc(100% - 20px);
+            }
+            #info h1 {
+                font-size: 14px;
+            }
+            #info p {
+                font-size: 10px;
+            }
+            #controls {
+                bottom: 10px;
+                padding: 8px 10px;
+                gap: 6px;
+                flex-wrap: wrap;
+            }
+            button {
+                padding: 6px 10px;
+                font-size: 10px;
+                border-radius: 15px;
+            }
+            .intro-container {
+                padding: 20px 15px;
+                border-radius: 15px;
+                max-width: 95%;
+            }
+            .intro-title {
+                font-size: 36px;
+                letter-spacing: 3px;
+                margin-bottom: 12px;
+            }
+            .intro-line {
+                margin: 15px auto;
+                height: 3px;
+            }
+            @keyframes expandLine {
+                to { width: 180px; }
+            }
+            .intro-subtitle {
+                font-size: 18px;
+                letter-spacing: 2px;
+            }
+            .intro-ornament {
+                font-size: 30px;
+            }
+            .ornament-left {
+                left: -35px;
+            }
+            .ornament-right {
+                right: -35px;
+            }
+            .intro-glow {
+                width: 150px;
+                height: 150px;
+            }
+            .particle-3d {
+                width: 3px;
+                height: 3px;
+            }
+            .hexagon {
+                width: 40px;
+                height: 40px;
+            }
+            .label {
+                font-size: 10px;
+                padding: 6px 10px;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            .intro-title {
+                font-size: 28px;
+                letter-spacing: 2px;
+            }
+            .intro-subtitle {
+                font-size: 16px;
+                letter-spacing: 1px;
+            }
+            .intro-ornament {
+                font-size: 24px;
+            }
+            .ornament-left {
+                left: -30px;
+            }
+            .ornament-right {
+                right: -30px;
+            }
+            @keyframes expandLine {
+                to { width: 140px; }
+            }
+            button {
+                padding: 5px 8px;
+                font-size: 9px;
+            }
+        }
+        
+        /* Landscape Mobile */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .intro-title {
+                font-size: 32px;
+                margin-bottom: 10px;
+            }
+            .intro-subtitle {
+                font-size: 18px;
+            }
+            .intro-container {
+                padding: 20px 30px;
+            }
+            .intro-line {
+                margin: 12px auto;
+            }
+            #info {
+                padding: 10px;
+                max-width: 250px;
+            }
+            #controls {
+                padding: 8px 15px;
+                bottom: 10px;
+            }
+            button {
+                padding: 6px 12px;
+                font-size: 10px;
+            }
+        }
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 24px;
+            text-align: center;
+        }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="intro">
+        <!-- Animated grid background -->
+        <div class="intro-grid"></div>
+        
+        <!-- Rotating light rays -->
+        <div class="intro-rays"></div>
+        
+        <!-- Hexagon decorations -->
+        <div class="intro-hexagons">
+            <div class="hexagon hex1"></div>
+            <div class="hexagon hex2"></div>
+            <div class="hexagon hex3"></div>
+            <div class="hexagon hex4"></div>
+        </div>
+        
+        <!-- 3D Particles -->
+        <div class="intro-particles-3d">
+            <div class="particle-3d" style="left: 10%; bottom: 0; --tx: -100px; --ty: -800px; animation-delay: 0s;"></div>
+            <div class="particle-3d" style="left: 20%; bottom: 0; --tx: 50px; --ty: -900px; animation-delay: 0.5s;"></div>
+            <div class="particle-3d" style="left: 30%; bottom: 0; --tx: -80px; --ty: -850px; animation-delay: 1s;"></div>
+            <div class="particle-3d" style="left: 40%; bottom: 0; --tx: 100px; --ty: -950px; animation-delay: 1.5s;"></div>
+            <div class="particle-3d" style="left: 50%; bottom: 0; --tx: -50px; --ty: -900px; animation-delay: 2s;"></div>
+            <div class="particle-3d" style="left: 60%; bottom: 0; --tx: 80px; --ty: -880px; animation-delay: 2.5s;"></div>
+            <div class="particle-3d" style="left: 70%; bottom: 0; --tx: -120px; --ty: -920px; animation-delay: 3s;"></div>
+            <div class="particle-3d" style="left: 80%; bottom: 0; --tx: 60px; --ty: -860px; animation-delay: 3.5s;"></div>
+            <div class="particle-3d" style="left: 90%; bottom: 0; --tx: -90px; --ty: -940px; animation-delay: 4s;"></div>
+            <div class="particle-3d" style="left: 15%; bottom: 0; --tx: 110px; --ty: -870px; animation-delay: 0.8s;"></div>
+            <div class="particle-3d" style="left: 25%; bottom: 0; --tx: -70px; --ty: -910px; animation-delay: 1.3s;"></div>
+            <div class="particle-3d" style="left: 35%; bottom: 0; --tx: 90px; --ty: -890px; animation-delay: 1.8s;"></div>
+            <div class="particle-3d" style="left: 45%; bottom: 0; --tx: -100px; --ty: -930px; animation-delay: 2.3s;"></div>
+            <div class="particle-3d" style="left: 55%; bottom: 0; --tx: 70px; --ty: -870px; animation-delay: 2.8s;"></div>
+            <div class="particle-3d" style="left: 65%; bottom: 0; --tx: -85px; --ty: -900px; animation-delay: 3.3s;"></div>
+            <div class="particle-3d" style="left: 75%; bottom: 0; --tx: 95px; --ty: -920px; animation-delay: 3.8s;"></div>
+        </div>
+        
+        <!-- Main content container -->
+        <div class="intro-container">
+            <div class="intro-glow"></div>
+            <div class="intro-shine"></div>
+            
+            <h1 class="intro-title">GROUP 7<br>RESEARCH</h1>
+            
+            <div class="intro-line"></div>
+            
+            <div class="intro-subtitle-container">
+                <div class="intro-ornament ornament-left">🌟</div>
+                <h2 class="intro-subtitle">POGI SI SIR GIO</h2>
+                <div class="intro-ornament ornament-right">🌟</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="container"></div>
+    
+    <div id="loading">
+        <div class="spinner"></div>
+        <div>Loading 3D Model...</div>
+    </div>
+
+    <div id="info">
+        <h1>🌱 Composting Machine</h1>
+        <p><strong>Features:</strong></p>
+        <p>• Rotating mixing paddles</p>
+        <p>• Perforated air distribution</p>
+        <p>• Copper heating coils</p>
+        <p>• Aeration vents</p>
+        <p>• Temperature monitoring</p>
+        <p><strong>Controls:</strong> Drag to rotate, scroll to zoom</p>
+    </div>
+
+    <div id="controls">
+        <button id="toggleRotation">⏸️ Pause Rotation</button>
+        <button id="toggleDoor">🚪 Open Door</button>
+        <button id="toggleLid">📦 Open Lid</button>
+        <button id="explodeView">💥 Explode View</button>
+        <button id="toggleLabels">🏷️ Show Labels</button>
+        <button id="resetView">🔄 Reset View</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        let scene, camera, renderer, controls;
+        let mixingShaft, paddles = [], heatingCoil, door, lid;
+        let isRotating = true;
+        let isDoorOpen = false;
+        let isLidOpen = false;
+        let isExploded = false;
+        let showLabels = false;
+        let machine;
+        let machineComponents = {};
+        let cameraAngle = 0;
+        let cameraRadius = 15;
+        let cameraHeight = 4;
+        function init() {
+            // Scene setup
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x1a1a2e);
+            scene.fog = new THREE.Fog(0x1a1a2e, 10, 50);
+
+            // Camera - better initial angle to see the front
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(10, 4, 10);
+            camera.lookAt(0, 0, 0);
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            document.getElementById('container').appendChild(renderer.domElement);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+
+            const mainLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            mainLight.position.set(5, 10, 5);
+            mainLight.castShadow = true;
+            mainLight.shadow.mapSize.width = 2048;
+            mainLight.shadow.mapSize.height = 2048;
+            scene.add(mainLight);
+
+            const fillLight = new THREE.DirectionalLight(0x4fc3f7, 0.3);
+            fillLight.position.set(-5, 5, -5);
+            scene.add(fillLight);
+
+            const pointLight = new THREE.PointLight(0xffa500, 0.5);
+            pointLight.position.set(0, 3, 0);
+            scene.add(pointLight);
+
+            // Build the machine
+            machine = new THREE.Group();
+            buildMachine();
+            scene.add(machine);
+
+            // Mouse controls
+            setupControls();
+
+            // Event listeners
+            window.addEventListener('resize', onWindowResize);
+            document.getElementById('toggleRotation').addEventListener('click', toggleRotation);
+            document.getElementById('toggleDoor').addEventListener('click', toggleDoor);
+            document.getElementById('toggleLid').addEventListener('click', toggleLid);
+            document.getElementById('explodeView').addEventListener('click', toggleExplode);
+            document.getElementById('toggleLabels').addEventListener('click', toggleLabels);
+            document.getElementById('resetView').addEventListener('click', resetView);
+
+            // Hide loading
+            document.getElementById('loading').style.display = 'none';
+
+            // Start animation
+            animate();
+        }
+
+        function buildMachine() {
+            // Main chamber (outer insulated box) - built from separate panels
+            const insulationMaterial = new THREE.MeshStandardMaterial({
+                color: 0xe0e0e0,
+                roughness: 0.7,
+                metalness: 0.1
+            });
+
+            // Top panel
+            const topPanel = new THREE.Mesh(
+                new THREE.BoxGeometry(6, 0.2, 4),
+                insulationMaterial
+            );
+            topPanel.position.y = 1.75;
+            topPanel.castShadow = true;
+            topPanel.userData = { name: 'Top Panel', originalPos: new THREE.Vector3(0, 1.75, 0) };
+            machine.add(topPanel);
+            machineComponents.topPanel = topPanel;
+
+            // Bottom panel
+            const bottomPanel = new THREE.Mesh(
+                new THREE.BoxGeometry(6, 0.2, 4),
+                insulationMaterial
+            );
+            bottomPanel.position.y = -1.75;
+            bottomPanel.castShadow = true;
+            bottomPanel.userData = { name: 'Bottom Panel', originalPos: new THREE.Vector3(0, -1.75, 0) };
+            machine.add(bottomPanel);
+            machineComponents.bottomPanel = bottomPanel;
+
+            // Back panel
+            const backPanel = new THREE.Mesh(
+                new THREE.BoxGeometry(6, 3.5, 0.2),
+                insulationMaterial
+            );
+            backPanel.position.z = -2;
+            backPanel.castShadow = true;
+            backPanel.userData = { name: 'Back Panel', originalPos: new THREE.Vector3(0, 0, -2) };
+            machine.add(backPanel);
+            machineComponents.backPanel = backPanel;
+
+            // Left panel (with horizontal vent slats)
+            const leftPanel = new THREE.Mesh(
+                new THREE.BoxGeometry(0.2, 3.5, 4),
+                insulationMaterial
+            );
+            leftPanel.position.x = -3;
+            leftPanel.castShadow = true;
+            leftPanel.userData = { name: 'Left Panel with Vents', originalPos: new THREE.Vector3(-3, 0, 0) };
+            machine.add(leftPanel);
+            machineComponents.leftPanel = leftPanel;
+
+            // Left panel horizontal vent slats (more prominent)
+            const ventMaterial = new THREE.MeshStandardMaterial({
+                color: 0x505050,
+                roughness: 0.6,
+                metalness: 0.3
+            });
+
+            const ventSlats = new THREE.Group();
+            for (let row = 0; row < 12; row++) {
+                // Create recessed area for each vent
+                const ventRecess = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.05, 0.15, 3.2),
+                    new THREE.MeshStandardMaterial({
+                        color: 0x303030,
+                        roughness: 0.8
+                    })
+                );
+                ventRecess.position.set(-3.08, 1.5 - row * 0.25, 0);
+                machine.add(ventRecess);
+
+                // Slanted vent slat
+                const slat = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.03, 0.12, 3.2),
+                    ventMaterial
+                );
+                slat.rotation.z = Math.PI / 6; // Angled slats
+                slat.position.set(-3.05, 1.5 - row * 0.25, 0);
+                machine.add(slat);
+            }
+
+            // Right panel (solid)
+            const rightPanel = new THREE.Mesh(
+                new THREE.BoxGeometry(0.2, 3.5, 4),
+                insulationMaterial
+            );
+            rightPanel.position.x = 3;
+            rightPanel.castShadow = true;
+            rightPanel.userData = { name: 'Right Control Panel', originalPos: new THREE.Vector3(3, 0, 0) };
+            machine.add(rightPanel);
+            machineComponents.rightPanel = rightPanel;
+
+            // Inner stainless steel chamber - back and sides only
+            const steelMaterial = new THREE.MeshStandardMaterial({
+                color: 0xc0c0c0,
+                roughness: 0.3,
+                metalness: 0.9
+            });
+
+            // Inner back wall
+            const innerBack = new THREE.Mesh(
+                new THREE.BoxGeometry(5.6, 3, 0.1),
+                steelMaterial
+            );
+            innerBack.position.z = -1.9;
+            innerBack.position.y = 0;
+            machine.add(innerBack);
+
+            // Inner left wall
+            const innerLeft = new THREE.Mesh(
+                new THREE.BoxGeometry(0.1, 3, 3.6),
+                steelMaterial
+            );
+            innerLeft.position.x = -2.8;
+            innerLeft.position.y = 0;
+            machine.add(innerLeft);
+
+            // Inner right wall
+            const innerRight = new THREE.Mesh(
+                new THREE.BoxGeometry(0.1, 3, 3.6),
+                steelMaterial
+            );
+            innerRight.position.x = 2.8;
+            innerRight.position.y = 0;
+            machine.add(innerRight);
+
+            // Inner top
+            const innerTop = new THREE.Mesh(
+                new THREE.BoxGeometry(5.6, 0.1, 3.6),
+                steelMaterial
+            );
+            innerTop.position.y = 1.5;
+            machine.add(innerTop);
+
+            // Inner bottom
+            const innerBottom = new THREE.Mesh(
+                new THREE.BoxGeometry(5.6, 0.1, 3.6),
+                steelMaterial
+            );
+            innerBottom.position.y = -1.5;
+            machine.add(innerBottom);
+
+            // Mixing shaft (horizontal through center)
+            const shaftMaterial = new THREE.MeshStandardMaterial({
+                color: 0xa0a0a0,
+                roughness: 0.2,
+                metalness: 0.95
+            });
+
+            mixingShaft = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.15, 0.15, 6.2, 16),
+                shaftMaterial
+            );
+            mixingShaft.rotation.z = Math.PI / 2;
+            mixingShaft.position.y = 0;
+            mixingShaft.castShadow = true;
+            mixingShaft.userData = { name: 'Mixing Shaft with Paddles', originalPos: new THREE.Vector3(0, 0, 0) };
+            machine.add(mixingShaft);
+            machineComponents.mixingShaft = mixingShaft;
+
+            // Mixing paddles (6 angled paddles)
+            const paddleMaterial = new THREE.MeshStandardMaterial({
+                color: 0xb0b0b0,
+                roughness: 0.4,
+                metalness: 0.85,
+                side: THREE.DoubleSide
+            });
+
+            for (let i = 0; i < 6; i++) {
+                const angle = (i / 6) * Math.PI * 2;
+                const paddle = new THREE.Mesh(
+                    new THREE.BoxGeometry(1.2, 0.3, 0.05),
+                    paddleMaterial
+                );
+                
+                paddle.position.x = Math.cos(angle) * 1;
+                paddle.position.z = Math.sin(angle) * 1;
+                paddle.rotation.y = angle;
+                paddle.rotation.x = Math.PI / 6; // Angle the paddle
+                paddle.castShadow = true;
+                
+                mixingShaft.add(paddle);
+                paddles.push(paddle);
+            }
+
+            // Perforated air pipe at bottom
+            const pipeMaterial = new THREE.MeshStandardMaterial({
+                color: 0xd0d0d0,
+                roughness: 0.3,
+                metalness: 0.8
+            });
+
+            const airPipe = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.12, 0.12, 5.5, 16),
+                pipeMaterial
+            );
+            airPipe.rotation.z = Math.PI / 2;
+            airPipe.position.y = -1.3;
+            airPipe.castShadow = true;
+            airPipe.userData = { name: 'Perforated Air Distribution Pipe', originalPos: new THREE.Vector3(0, -1.3, 0) };
+            machine.add(airPipe);
+            machineComponents.airPipe = airPipe;
+
+            // Holes in air pipe
+            const holeMaterial = new THREE.MeshStandardMaterial({
+                color: 0x303030,
+                roughness: 0.8
+            });
+
+            for (let i = -2.5; i <= 2.5; i += 0.5) {
+                const hole = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.05, 0.05, 0.02, 8),
+                    holeMaterial
+                );
+                hole.position.set(i, -1.15, 0);
+                hole.rotation.x = Math.PI / 2;
+                machine.add(hole);
+            }
+
+            // Copper heating coil
+            const copperMaterial = new THREE.MeshStandardMaterial({
+                color: 0xb87333,
+                roughness: 0.3,
+                metalness: 0.9
+            });
+
+            const coilPath = new THREE.CurvePath();
+            
+            // Create heating coil path around perimeter
+            const points = [];
+            // Top edge
+            for (let x = -2.7; x <= 2.7; x += 0.1) {
+                points.push(new THREE.Vector3(x, 1.4, -1.7));
+            }
+            // Right side down
+            for (let y = 1.4; y >= -1.4; y -= 0.1) {
+                points.push(new THREE.Vector3(2.7, y, -1.7));
+            }
+            // Bottom edge
+            for (let x = 2.7; x >= -2.7; x -= 0.1) {
+                points.push(new THREE.Vector3(x, -1.4, -1.7));
+            }
+
+            const coilCurve = new THREE.CatmullRomCurve3(points);
+            const coilGeometry = new THREE.TubeGeometry(coilCurve, 100, 0.08, 8, false);
+            heatingCoil = new THREE.Mesh(coilGeometry, copperMaterial);
+            heatingCoil.userData = { name: 'Copper Heating Coil', originalPos: new THREE.Vector3(0, 0, 0) };
+            machine.add(heatingCoil);
+            machineComponents.heatingCoil = heatingCoil;
+
+            // Aeration vents on right interior wall
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 10; col++) {
+                    const vent = new THREE.Mesh(
+                        new THREE.BoxGeometry(0.05, 0.12, 0.06),
+                        ventMaterial
+                    );
+                    vent.position.set(2.75, 1.2 - row * 0.35, -1.5 + col * 0.35);
+                    machine.add(vent);
+                }
+            }
+
+            // Top lid (hinged at back, opens backward)
+            const lidMaterial = new THREE.MeshStandardMaterial({
+                color: 0xd0d0d0,
+                roughness: 0.4,
+                metalness: 0.7
+            });
+
+            lid = new THREE.Group();
+            const lidPivot = new THREE.Group();
+            
+            const lidMesh = new THREE.Mesh(
+                new THREE.BoxGeometry(2.5, 0.15, 2),
+                lidMaterial
+            );
+            lidMesh.castShadow = true;
+            // Position relative to pivot at back
+            lidMesh.position.z = -1;
+            lidPivot.add(lidMesh);
+
+            // Lid handle/grip at front
+            const lidHandle = new THREE.Mesh(
+                new THREE.BoxGeometry(0.6, 0.1, 0.15),
+                new THREE.MeshStandardMaterial({
+                    color: 0xa0a0a0,
+                    roughness: 0.5,
+                    metalness: 0.8
+                })
+            );
+            lidHandle.position.set(0, 0.1, -0.1);
+            lidPivot.add(lidHandle);
+
+            // Hinges at back of lid
+            const lidHingeMaterial = new THREE.MeshStandardMaterial({
+                color: 0x606060,
+                roughness: 0.4,
+                metalness: 0.85
+            });
+
+            for (let i = 0; i < 2; i++) {
+                const hinge = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.2, 0.08, 0.1),
+                    lidHingeMaterial
+                );
+                hinge.position.set(-0.8 + i * 1.6, 0, -1.95);
+                lidPivot.add(hinge);
+            }
+
+            lid.add(lidPivot);
+            lid.position.set(0, 1.8, 0);
+            lid.userData = { name: 'Top Waste Inlet Lid', originalPos: new THREE.Vector3(0, 1.8, 0) };
+            machine.add(lid);
+            machineComponents.lid = lid;
+
+            // Waste inlet square opening
+            const inletMaterial = new THREE.MeshStandardMaterial({
+                color: 0x202020,
+                roughness: 0.8
+            });
+
+            const wasteInlet = new THREE.Mesh(
+                new THREE.BoxGeometry(2.3, 0.05, 1.8),
+                inletMaterial
+            );
+            wasteInlet.position.set(0, 1.75, 0);
+            machine.add(wasteInlet);
+
+            // Inlet frame/border
+            const inletFrame = new THREE.Mesh(
+                new THREE.BoxGeometry(2.5, 0.1, 2),
+                new THREE.MeshStandardMaterial({
+                    color: 0xb0b0b0,
+                    roughness: 0.5,
+                    metalness: 0.7
+                })
+            );
+            inletFrame.position.set(0, 1.78, 0);
+            machine.add(inletFrame);
+
+            // Temperature display on right exterior panel
+            const displayMaterial = new THREE.MeshStandardMaterial({
+                color: 0x00bcd4,
+                emissive: 0x00bcd4,
+                emissiveIntensity: 0.5,
+                roughness: 0.3
+            });
+
+            const display = new THREE.Mesh(
+                new THREE.BoxGeometry(0.5, 0.3, 0.05),
+                displayMaterial
+            );
+            display.position.set(3.05, 1, 0.8);
+            machine.add(display);
+
+            // Display frame
+            const displayFrame = new THREE.Mesh(
+                new THREE.BoxGeometry(0.55, 0.35, 0.03),
+                new THREE.MeshStandardMaterial({ color: 0x303030 })
+            );
+            displayFrame.position.set(3.05, 1, 0.82);
+            machine.add(displayFrame);
+
+            // Heating element port on right panel
+            const portMaterial = new THREE.MeshStandardMaterial({
+                color: 0x303030,
+                roughness: 0.5,
+                metalness: 0.6
+            });
+
+            const heatingPort = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.15, 0.15, 0.12, 16),
+                portMaterial
+            );
+            heatingPort.rotation.z = Math.PI / 2;
+            heatingPort.position.set(3.08, 0.3, 0.8);
+            machine.add(heatingPort);
+
+            // Port label/ring
+            const portRing = new THREE.Mesh(
+                new THREE.TorusGeometry(0.18, 0.02, 8, 16),
+                new THREE.MeshStandardMaterial({ color: 0xff6b35 })
+            );
+            portRing.rotation.y = Math.PI / 2;
+            portRing.position.set(3.08, 0.3, 0.8);
+            machine.add(portRing);
+
+            // Microbial inoculant port on right panel below heating port
+            const inoculantPort = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.12, 0.12, 0.12, 16),
+                portMaterial
+            );
+            inoculantPort.rotation.z = Math.PI / 2;
+            inoculantPort.position.set(3.08, -0.4, 0.8);
+            machine.add(inoculantPort);
+
+            // Inoculant port ring
+            const inoculantRing = new THREE.Mesh(
+                new THREE.TorusGeometry(0.15, 0.02, 8, 16),
+                new THREE.MeshStandardMaterial({ color: 0x4caf50 })
+            );
+            inoculantRing.rotation.y = Math.PI / 2;
+            inoculantRing.position.set(3.08, -0.4, 0.8);
+            machine.add(inoculantRing);
+
+            // Large front opening panel/door - entire front face opens UPWARD
+            door = new THREE.Group();
+            
+            // Create a pivot point at the bottom of the door
+            const doorPivot = new THREE.Group();
+            
+            // Main front panel (large opening)
+            const frontPanelMesh = new THREE.Mesh(
+                new THREE.BoxGeometry(5.8, 3.3, 0.15),
+                insulationMaterial
+            );
+            frontPanelMesh.castShadow = true;
+            // Position relative to pivot at bottom
+            frontPanelMesh.position.y = 1.65;
+            doorPivot.add(frontPanelMesh);
+
+            // Inner steel front panel
+            const innerFrontPanel = new THREE.Mesh(
+                new THREE.BoxGeometry(5.6, 3, 0.1),
+                steelMaterial
+            );
+            innerFrontPanel.position.z = -0.05;
+            innerFrontPanel.position.y = 1.65;
+            doorPivot.add(innerFrontPanel);
+
+            // Frame around the opening
+            const frameMaterial = new THREE.MeshStandardMaterial({
+                color: 0xa0a0a0,
+                roughness: 0.4,
+                metalness: 0.8
+            });
+
+            // Hinges on bottom edge
+            const hingeMaterial = new THREE.MeshStandardMaterial({
+                color: 0x505050,
+                roughness: 0.5,
+                metalness: 0.85
+            });
+
+            for (let i = 0; i < 3; i++) {
+                const hinge = new THREE.Mesh(
+                    new THREE.BoxGeometry(0.3, 0.1, 0.15),
+                    hingeMaterial
+                );
+                hinge.position.set(-2.5 + i * 2.5, 0.05, 0.08);
+                doorPivot.add(hinge);
+            }
+
+            door.add(doorPivot);
+            door.position.set(0, -1.65, 1.95);
+            door.userData = { name: 'Front Access Door', originalPos: new THREE.Vector3(0, -1.65, 1.95) };
+            machine.add(door);
+            machineComponents.door = door;
+
+            // Door handle on front (centered)
+            const handleMaterial = new THREE.MeshStandardMaterial({
+                color: 0x505050,
+                roughness: 0.4,
+                metalness: 0.8
+            });
+
+            const handle = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.08, 0.08, 0.6, 16),
+                handleMaterial
+            );
+            handle.rotation.z = Math.PI / 2;
+            handle.position.set(0, 1, 0.12);
+            door.children[0].add(handle);
+
+            // Small harvest door at bottom (separate from main door)
+            const harvestDoor = new THREE.Mesh(
+                new THREE.BoxGeometry(1.5, 0.5, 0.15),
+                insulationMaterial
+            );
+            harvestDoor.position.set(0, -1.5, 1.95);
+            harvestDoor.castShadow = true;
+            machine.add(harvestDoor);
+
+            // Harvest door handle
+            const harvestHandle = new THREE.Mesh(
+                new THREE.BoxGeometry(0.3, 0.08, 0.08),
+                handleMaterial
+            );
+            harvestHandle.position.set(0, -1.5, 2.05);
+            machine.add(harvestHandle);
+
+            // Air inlet connection on left side (more prominent with elbow)
+            const airInletGroup = new THREE.Group();
+            
+            // Horizontal pipe coming out from left side
+            const horizontalPipe = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.15, 0.15, 0.8, 16),
+                pipeMaterial
+            );
+            horizontalPipe.rotation.z = Math.PI / 2;
+            horizontalPipe.position.set(-3.5, -1, 1.2);
+            airInletGroup.add(horizontalPipe);
+
+            // Elbow joint
+            const elbow = new THREE.Mesh(
+                new THREE.TorusGeometry(0.2, 0.15, 8, 16, Math.PI / 2),
+                pipeMaterial
+            );
+            elbow.rotation.y = Math.PI;
+            elbow.rotation.z = -Math.PI / 2;
+            elbow.position.set(-3.9, -1, 1.2);
+            airInletGroup.add(elbow);
+
+            // Vertical downward pipe
+            const verticalPipe = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.15, 0.15, 0.6, 16),
+                pipeMaterial
+            );
+            verticalPipe.position.set(-3.9, -1.5, 1.2);
+            airInletGroup.add(verticalPipe);
+
+            // Pipe connection flange on machine
+            const flange = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.2, 0.2, 0.1, 16),
+                new THREE.MeshStandardMaterial({
+                    color: 0x808080,
+                    roughness: 0.4,
+                    metalness: 0.8
+                })
+            );
+            flange.rotation.z = Math.PI / 2;
+            flange.position.set(-3.15, -1, 1.2);
+            airInletGroup.add(flange);
+
+            machine.add(airInletGroup);
+
+            // Support legs
+            const legMaterial = new THREE.MeshStandardMaterial({
+                color: 0x606060,
+                roughness: 0.5,
+                metalness: 0.7
+            });
+
+            const legPositions = [
+                [-2.5, -2, 1.5],
+                [2.5, -2, 1.5],
+                [-2.5, -2, -1.5],
+                [2.5, -2, -1.5]
+            ];
+
+            legPositions.forEach(pos => {
+                const leg = new THREE.Mesh(
+                    new THREE.CylinderGeometry(0.1, 0.1, 0.8, 16),
+                    legMaterial
+                );
+                leg.position.set(pos[0], pos[1], pos[2]);
+                leg.castShadow = true;
+                machine.add(leg);
+            });
+
+            // Ground plane
+            const groundGeometry = new THREE.PlaneGeometry(50, 50);
+            const groundMaterial = new THREE.MeshStandardMaterial({
+                color: 0x1a1a2e,
+                roughness: 0.9
+            });
+            const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+            ground.rotation.x = -Math.PI / 2;
+            ground.position.y = -2.5;
+            ground.receiveShadow = true;
+            scene.add(ground);
+        }
+
+        function setupControls() {
+            let isDragging = false;
+            let previousMousePosition = { x: 0, y: 0 };
+
+            renderer.domElement.addEventListener('mousedown', (e) => {
+                isDragging = true;
+            });
+
+            renderer.domElement.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    const deltaMove = {
+                        x: e.offsetX - previousMousePosition.x,
+                        y: e.offsetY - previousMousePosition.y
+                    };
+
+                    // Move camera around the machine (fixed inversion)
+                    cameraAngle -= deltaMove.x * 0.01; // Reversed for natural control
+                    cameraHeight += deltaMove.y * 0.05; // Reversed for natural control
+                    cameraHeight = Math.max(-10, Math.min(15, cameraHeight));
+                }
+
+                previousMousePosition = { x: e.offsetX, y: e.offsetY };
+            });
+
+            renderer.domElement.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+
+            renderer.domElement.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                cameraRadius += e.deltaY * 0.02;
+                cameraRadius = Math.max(8, Math.min(30, cameraRadius));
+            });
+        }
+
+        function toggleRotation() {
+            isRotating = !isRotating;
+            const btn = document.getElementById('toggleRotation');
+            btn.textContent = isRotating ? '⏸️ Pause Rotation' : '▶️ Start Rotation';
+            btn.classList.toggle('active');
+        }
+
+        function toggleDoor() {
+            isDoorOpen = !isDoorOpen;
+            const btn = document.getElementById('toggleDoor');
+            btn.textContent = isDoorOpen ? '🚪 Close Door' : '🚪 Open Door';
+            btn.classList.toggle('active');
+        }
+
+        function toggleLid() {
+            isLidOpen = !isLidOpen;
+            const btn = document.getElementById('toggleLid');
+            btn.textContent = isLidOpen ? '📦 Close Lid' : '📦 Open Lid';
+            btn.classList.toggle('active');
+        }
+
+        function toggleExplode() {
+            isExploded = !isExploded;
+            const btn = document.getElementById('explodeView');
+            btn.textContent = isExploded ? '💥 Assemble' : '💥 Explode View';
+            btn.classList.toggle('active');
+        }
+
+        function toggleLabels() {
+            showLabels = !showLabels;
+            const btn = document.getElementById('toggleLabels');
+            btn.textContent = showLabels ? '🏷️ Hide Labels' : '🏷️ Show Labels';
+            btn.classList.toggle('active');
+            
+            document.querySelectorAll('.label').forEach(label => {
+                label.classList.toggle('visible', showLabels);
+            });
+        }
+
+        function resetView() {
+            cameraAngle = 0;
+            cameraRadius = 15;
+            cameraHeight = 4;
+            isExploded = false;
+            document.getElementById('explodeView').classList.remove('active');
+            document.getElementById('explodeView').textContent = '💥 Explode View';
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Update camera position (orbit around machine)
+            camera.position.x = Math.sin(cameraAngle) * cameraRadius;
+            camera.position.z = Math.cos(cameraAngle) * cameraRadius;
+            camera.position.y = cameraHeight;
+            camera.lookAt(0, 0, 0);
+
+            // Auto-rotate camera slowly
+            if (!renderer.domElement.matches(':active')) {
+                cameraAngle += 0.003;
+            }
+
+            // Rotate mixing shaft and paddles
+            if (isRotating) {
+                mixingShaft.rotation.x += 0.01;
+            }
+
+            // Animate door - rotates UPWARD and OUTWARD on bottom hinge
+            const targetDoorRotation = isDoorOpen ? Math.PI * 0.45 : 0;
+            door.children[0].rotation.x += (targetDoorRotation - door.children[0].rotation.x) * 0.1;
+
+            // Animate lid - rotates UPWARD and OUTWARD (backward) on back hinge
+            const targetLidRotation = isLidOpen ? Math.PI * 0.75 : 0;
+            lid.children[0].rotation.x += (targetLidRotation - lid.children[0].rotation.x) * 0.1;
+
+            // Explode view animation
+            const explodeFactor = isExploded ? 1 : 0;
+            
+            if (machineComponents.topPanel) {
+                const target = isExploded ? new THREE.Vector3(0, 4, 0) : machineComponents.topPanel.userData.originalPos;
+                machineComponents.topPanel.position.lerp(target, 0.1);
+            }
+            
+            if (machineComponents.bottomPanel) {
+                const target = isExploded ? new THREE.Vector3(0, -4, 0) : machineComponents.bottomPanel.userData.originalPos;
+                machineComponents.bottomPanel.position.lerp(target, 0.1);
+            }
+            
+            if (machineComponents.leftPanel) {
+                const target = isExploded ? new THREE.Vector3(-5, 0, 0) : machineComponents.leftPanel.userData.originalPos;
+                machineComponents.leftPanel.position.lerp(target, 0.1);
+            }
+            
+            if (machineComponents.rightPanel) {
+                const target = isExploded ? new THREE.Vector3(5, 0, 0) : machineComponents.rightPanel.userData.originalPos;
+                machineComponents.rightPanel.position.lerp(target, 0.1);
+            }
+            
+            if (machineComponents.backPanel) {
+                const target = isExploded ? new THREE.Vector3(0, 0, -4) : machineComponents.backPanel.userData.originalPos;
+                machineComponents.backPanel.position.lerp(target, 0.1);
+            }
+
+            if (machineComponents.door) {
+                const target = isExploded ? new THREE.Vector3(0, -3, 4) : machineComponents.door.userData.originalPos;
+                machineComponents.door.position.lerp(target, 0.1);
+            }
+
+            if (machineComponents.lid) {
+                const target = isExploded ? new THREE.Vector3(0, 4, -2) : machineComponents.lid.userData.originalPos;
+                machineComponents.lid.position.lerp(target, 0.1);
+            }
+
+            if (machineComponents.mixingShaft) {
+                const target = isExploded ? new THREE.Vector3(0, 0.5, 0) : machineComponents.mixingShaft.userData.originalPos;
+                machineComponents.mixingShaft.position.lerp(target, 0.1);
+            }
+
+            if (machineComponents.airPipe) {
+                const target = isExploded ? new THREE.Vector3(0, -2.5, 0) : machineComponents.airPipe.userData.originalPos;
+                machineComponents.airPipe.position.lerp(target, 0.1);
+            }
+
+            if (machineComponents.heatingCoil) {
+                const target = isExploded ? new THREE.Vector3(0, 0, -3) : machineComponents.heatingCoil.userData.originalPos;
+                machineComponents.heatingCoil.position.lerp(target, 0.1);
+            }
+
+            // Update labels positions
+            updateLabels();
+
+            renderer.render(scene, camera);
+        }
+
+        function updateLabels() {
+            if (!showLabels) return;
+
+            // Only update labels every few frames to reduce jitter
+            const framesToSkip = 2;
+            if (!this.labelUpdateCounter) this.labelUpdateCounter = 0;
+            this.labelUpdateCounter++;
+            
+            if (this.labelUpdateCounter % framesToSkip !== 0 && this.labelUpdateCounter > 1) {
+                return;
+            }
+
+            Object.keys(machineComponents).forEach((key, index) => {
+                const component = machineComponents[key];
+                if (!component || !component.userData.name) return;
+
+                const vector = new THREE.Vector3();
+                component.getWorldPosition(vector);
+                vector.project(camera);
+
+                // Round positions to reduce jitter
+                const x = Math.round((vector.x * 0.5 + 0.5) * window.innerWidth);
+                const y = Math.round((vector.y * -0.5 + 0.5) * window.innerHeight);
+
+                let label = document.getElementById(`label-${key}`);
+                if (!label) {
+                    label = document.createElement('div');
+                    label.className = 'label';
+                    label.id = `label-${key}`;
+                    label.textContent = component.userData.name;
+                    document.body.appendChild(label);
+                }
+
+                // Use transform for smoother positioning
+                label.style.left = `${x}px`;
+                label.style.top = `${y}px`;
+                
+                const isVisible = showLabels && vector.z < 1;
+                label.classList.toggle('visible', isVisible);
+                label.style.opacity = isVisible ? '1' : '0';
+            });
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
